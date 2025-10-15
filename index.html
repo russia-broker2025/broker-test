@@ -3,514 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 Система Шлюзов - Жирный Брокер 💼</title>
+    <title>Визуализация Клиентов</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: #00ff88;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .hero {
-            background: linear-gradient(45deg, #00ff88, #00cc66, #009944, #007733);
-            background-size: 400% 400%;
-            animation: gradientShift 8s ease infinite;
             padding: 2rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,255,136,0.3);
-            position: relative;
-            overflow: hidden;
+            color: #fff;
         }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.1) 1deg, transparent 2deg);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            text-shadow: 0 0 20px #00ff88;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
+        
         .container {
             max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            margin: 0 auto;
         }
-
-        .clients-grid {
+        
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #e0e0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stats-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-
-        .client-card {
-            background: rgba(0,255,136,0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0,255,136,0.3);
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .client-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-
+        
         .client-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, #00ff88, #00cc66, #009944);
-            animation: scanline 2s linear infinite;
+            background: linear-gradient(90deg, #00f2ff, #00ff88);
         }
-
-        @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
+        
         .client-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,255,136,0.3);
-            border-color: #00ff88;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-color: rgba(255, 255, 255, 0.4);
         }
-
-        .client-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #00ff88;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .amount {
-            font-size: 1.5rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px #ffd700;
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .metric {
-            background: rgba(0,0,0,0.5);
-            padding: 0.5rem;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .metric-value {
-            color: #00ff88;
-            font-weight: bold;
-        }
-
-        .btn-select {
-            width: 100%;
-            padding: 0.8rem;
-background: linear-gradient(45deg, #00ff88, #00cc66);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .btn-select:hover {
-            background: linear-gradient(45deg, #00cc66, #009944);
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,255,136,0.4);
-        }
-
-        .shluzy-panel {
-            background: rgba(0,0,0,0.8);
-            border: 1px solid #00ff88;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 2rem;
-            display: none;
-        }
-
-        .shluzy-panel.active {
-            display: block;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .gateway {
-            background: rgba(0,255,136,0.1);
-            border: 1px solid #00ff88;
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gateway::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,255,136,0.2), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .gateway-header {
+        
+        .client-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
-
-        .gateway-status {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .status-processing { background: #ffeb3b; color: #000; }
-        .status-pending { background: #ffc107; color: #000; }
-        .status-verified { background: #4caf50; color: #fff; }
-        .status-delayed { background: #f44336; color: #fff; }
-
-        .progress-container {
-            background: rgba(0,0,0,0.5);
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 1rem 0;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff88, #00cc66);
-            width: 0%;
-            transition: width 0.5s ease;
-            position: relative;
-        }
-
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: progressShine 2s infinite;
-        }
-
-        @keyframes progressShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .log-terminal {
-            background: #000;
-            color: #00ff00;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            height: 200px;
-            overflow-y: auto;
-            margin-top: 1rem;
-            border: 1px solid #00ff88;
-        }
-
-        .log-entry {
-            margin: 0.2rem 0;
-            opacity: 0;
-            animation: fadeInLog 0.3s forwards;
-        }
-
-        @keyframes fadeInLog {
-            to { opacity: 1; }
-        }
-
-        .control-panel {
+        
+        .client-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f2ff, #00ff88);
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .control-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
             font-weight: bold;
+            margin-right: 1rem;
+            box-shadow: 0 4px 15px rgba(0,242,255,0.4);
         }
-
-        .
-btn-delay { background: #f44336; color: #fff; }
-        .btn-accelerate { background: #4caf50; color: #fff; }
-        .btn-stop { background: #ff9800; color: #fff; }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            opacity: 0.6;
+        
+        .client-name {
+            flex: 1;
+        }
+        
+        .client-name h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .client-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .info-label {
             font-size: 0.9rem;
+            opacity: 0.8;
         }
+        
+        .info-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .amount {
+            color: #00ff88;
+            font-size: 1.4rem;
+        }
+        
+        .gateway {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        
+        .search-bar {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            max-width: 500px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: #00f2ff;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        }
+        
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .client-card {
+            animation: fadeInUp 0.6s ease backwards;
+        }
+        
+        .client-card:nth-child(1) { animation-delay: 0.1s; }
+        .client-card:nth-child(2) { animation-delay: 0.2s; }
+        .client-card:nth-child(3) { animation-delay: 0.3s; }
+        .client-card:nth-child(4) { animation-delay: 0.4s; }
+        .client-card:nth-child(5) { animation-delay: 0.5s; }
+        .client-card:nth-child(6) { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>🔌 СИСТЕМА ШЛЮЗОВ • ЖИРНЫЙ БРОКЕР 🔌</h1>
-        <p>Мониторинг платежных потоков • Имитация банковских операций • Контроль транзакций</p>
-    </div>
-
     <div class="container">
-        <div class="clients-grid" id="clientsGrid">
-            <!-- Клиенты генерируются JS -->
-        </div>
-
-        <div class="shluzy-panel" id="shluzyPanel">
-            <h3 id="currentClientName">Клиент: Выберите для активации</h3>
-            <div id="gateways">
-                <!-- Шлюзы генерируются динамически -->
+        <h1>💼 Визуализация Клиентов</h1>
+        
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="stat-label">Всего клиентов</div>
+                <div class="stat-value" id="totalClients">0</div>
             </div>
-            <div class="control-panel">
-                <button class="control-btn btn-delay" onclick="simulateDelay()">⏳ Задержка шлюза</button>
-                <button class="control-btn btn-accelerate" onclick="accelerateGateway()">⚡ Ускорить</button>
-                <button class="control-btn btn-stop" onclick="stopSimulation()">🛑 Стоп</button>
+            <div class="stat-card">
+                <div class="stat-label">Общая сумма</div>
+                <div class="stat-value" id="totalAmount">₽0</div>
             </div>
-            <div class="log-terminal" id="logTerminal"></div>
+            <div class="stat-card">
+                <div class="stat-label">Активных шлюзов</div>
+                <div class="stat-value" id="activeGateways">0</div>
+            </div>
         </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по имени, фамилии или шлюзу...">
+        </div>
+        
+        <div class="clients-grid" id="clientsGrid"></div>
     </div>
-
-    <footer>
-        <p>© 2025 Система Шлюзов | Мониторинг в реальном времени | Безопасность 99.9% 🔒</p>
-    </footer>
-
+    
     <script>
         const clients = [
-            { name: "Геннадий К.", amount: "2,376,285 ₽", risk: "Низкий", status: "Активен", id: 1 },
-            { name: "Нелли З.", amount: "3,753,285 ₽", risk: "Средний", status: "Проверяется", id: 2 },
-            { name: "Валерий Г.", amount: "7,736,934 ₽", risk: "Высокий", status: "VIP", id: 3 },
-            { name: "Елена И.", amount: "3,275,265 ₽", risk: "Низкий", status: "Активен", id: 4 },
-            { name: "Елена М.", amount: "2,276,286 ₽", risk: "Средний", status: "Проверяется", id: 5 },
-            { name: "Евгений Х.", amount: "7,286,386 ₽", risk: "Высокий", status: "Ожидание", id: 6 },
-            { name: "Игорь Д.", amount: "3,264,275 ₽", risk: "Низкий", status: "Активен", id: 7 },
-            { name: "Андрей В.", amount: "3,265,998 ₽", risk: "Средний", status: "VIP", id: 8 }
+            { firstName: "Иван", lastName: "Петров", amount: 125000, gateway: "Россия" },
+            { firstName: "Мария", lastName: "Сидорова", amount: 89000, gateway: "Казахстан" },
+            { firstName: "Александр", lastName: "Козлов", amount: 156000, gateway: "Беларусь" },
+            { firstName: "Елена", lastName: "Новикова", amount: 203000, gateway: "Россия" },
+            { firstName: "Дмитрий", lastName: "Морозов", amount: 78000, gateway: "Украина" },
+            { firstName: "Анна", lastName: "Волкова", amount: 142000, gateway: "Грузия" }
         ];
-
-        let currentSimulation = null;
-
-        function renderClients() {
+        
+        function formatAmount(amount) {
+            return new Intl.NumberFormat('ru-RU', { 
+                style: 'currency', 
+                currency: 'RUB',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        function getInitials(firstName, lastName) {
+            return firstName.charAt(0) + lastName.charAt(0);
+        }
+        
+        function renderClients(clientsToRender = clients) {
             const grid = document.getElementById('clientsGrid');
-            clients.forEach(client => {
+            grid.innerHTML = '';
+            
+            clientsToRender.forEach(client => {
                 const card = document.createElement('div');
                 card.className = 'client-card';
                 card.innerHTML = `
-                    <div class="client-name">${client.name} 👤</div>
-                    <div class="amount">💰 ${client.amount}</div>
-                    <div class="metrics">
-                        <div class="metric">
-                            <div>⚠️ ${client.risk}</div>
-                            <div class="metric-value">${client.risk === 'Высокий' ? '🔴' : client.risk === 'Средний' ? '🟡' : '🟢'}</div>
-                        </div>
-                        <div class="metric">
-                            <div>📊 Статус</div>
-                            <div class="metric-value">${client.status}</div>
-                        </div>
-                        <div class="metric">
-                            <div>🆔 ID</div>
-                            <div class="metric-value">#${client.id}</div>
-                        </div>
-                        <div class="metric">
-                            <div>⏱️ Время</div>
-                            <div class="metric-value">${Math.floor(Math.random() * 24)}ч</div>
+                    <div class="client-header">
+                        <div class="client-avatar">${getInitials(client.firstName, client.lastName)}</div>
+                        <div class="client-name">
+                            <h3>${client.firstName} ${client.lastName}</h3>
                         </div>
                     </div>
-                    <button class="btn-select" onclick="activateShluzy(${clients.indexOf(client)})">
-                        🔌 Активировать шлюзы
-                    </button>
+                    <div class="client-info">
+                        <div class="info-row">
+                            <span class="info-label">Сумма</span>
+                            <span class="info-value amount">${formatAmount(client.amount)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Шлюз страны</span>
+                            <span class="info-value gateway">${client.gateway}</span>
+                        </div>
+                    </div>
                 `;
                 grid.appendChild(card);
             });
         }
-
-        function activateShluzy(index) {
-            const client = clients[index];
-currentSimulation = client;
+        
+        function updateStats() {
+            document.getElementById('totalClients').textContent = clients.length;
             
-            document.getElementById('currentClientName').textContent = Клиент: ${client.name} | Сумма: ${client.amount};
-            document.getElementById('shluzyPanel').classList.add('active');
+            const total = clients.reduce((sum, client) => sum + client.amount, 0);
+            document.getElementById('totalAmount').textContent = formatAmount(total);
             
-            renderGateways(client);
-            startSimulation();
+            const uniqueGateways = new Set(clients.map(c => c.gateway));
+            document.getElementById('activeGateways').textContent = uniqueGateways.size;
         }
-
-        function renderGateways(client) {
-            const gatewaysContainer = document.getElementById('gateways');
-            gatewaysContainer.innerHTML = `
-                <div class="gateway">
-                    <div class="gateway-header">
-                        <span>🏦 Банк-Шлюз Alpha</span>
-                        <span class="gateway-status status-${getRandomStatus()}">Обрабатывается</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="gateway1"></div>
-                    </div>
-                    <p>Проверка KYC • Лимит: ${Math.floor(Math.random() * 1000000 + 1000000).toLocaleString()} ₽</p>
-                </div>
-                <div class="gateway">
-                    <div class="gateway-header">
-                        <span>💳 Платежный Шлюз Beta</span>
-                        <span class="gateway-status status-${getRandomStatus()}">Верификация</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="gateway2"></div>
-                    </div>
-                    <p>AML Check • Статус: ${['Чисто', 'Флаг', 'Под вопросом'][Math.floor(Math.random() * 3)]}</p>
-                </div>
-                <div class="gateway">
-                    <div class="gateway-header">
-                        <span>🔒 Безопасность Gamma</span>
-                        <span class="gateway-status status-${getRandomStatus()}">Задержка</span>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="gateway3"></div>
-                    </div>
-                    <p>2FA • Device: ${['iOS', 'Android', 'Windows', 'Linux'][Math.floor(Math.random() * 4)]}</p>
-                </div>
-            `;
+        
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase();
+            const filtered = clients.filter(client => 
+                client.firstName.toLowerCase().includes(query) ||
+                client.lastName.toLowerCase().includes(query) ||
+                client.gateway.toLowerCase().includes(query)
+            );
+            renderClients(filtered);
         }
-
-        function getRandomStatus() {
-            const statuses = ['processing', 'pending', 'verified', 'delayed'];
-            return statuses[Math.floor(Math.random() * statuses.length)];
-        }
-
-        function startSimulation() {
-            const logTerminal = document.getElementById('logTerminal');
-            logTerminal.innerHTML = '';
-            
-            const logs = [
-                [${new Date().toLocaleTimeString()}] Инициализация шлюзов для ${currentSimulation.name},
-                [${new Date().toLocaleTimeString()}] Сумма транзакции: ${currentSimulation.amount},
-                [${new Date().toLocaleTimeString()}] Запуск параллельной верификации...,
-                [${new Date().toLocaleTimeString()}] Gateway Alpha: ✅ Подключен,
-                [${new Date().toLocaleTimeString()}] Gateway Beta: ⚠️ AML Check активен,
-                [${new Date().toLocaleTimeString()}] Gateway Gamma: 🔒 2FA запрос,
-                [${new Date().toLocaleTimeString()}] Риск-оценка: ${currentSimulation.risk},
-                [${new Date().toLocaleTimeString()}] Мониторинг в реальном времени...
-            ];
-
-            let logIndex = 0;
-            const logInterval = setInterval(() => {
-                if (logIndex < logs.length) {
-                    addLogEntry(logs[logIndex]);
-                    logIndex++;
-                } else {
-                    clearInterval(logInterval);
-                    simulateGatewayProgress();
-                }
-            }, 1000);
-        }
-
-        function addLogEntry(message) {
-            const logTerminal = document.getElementById('logTerminal');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.style.animationDelay = '0s';
-            entry.textContent = message;
-            logTerminal.appendChild(entry);
-            logTerminal.
-scrollTop = logTerminal.scrollHeight;
-        }
-
-        function simulateGatewayProgress() {
-            const gateways = ['gateway1', 'gateway2', 'gateway3'];
-            gateways.forEach((gw, index) => {
-                setTimeout(() => {
-                    const progress = document.getElementById(gw);
-                    const target = [30, 65, 85][index] + Math.random() * 20;
-                    progress.style.width = ${Math.min(target, 95)}%;
-                }, index * 2000);
-            });
-        }
-
-        function simulateDelay() {
-            addLogEntry(`[${new Date().toLocaleTimeString()}] 🚨 Ручная задержка шлюза • +24ч`);
-            document.querySelectorAll('.progress-bar').forEach(bar => {
-                const current = parseInt(bar.style.width) || 0;
-                bar.style.width = ${Math.max(0, current - 20)}%;
-            });
-        }
-
-        function accelerateGateway() {
-            addLogEntry(`[${new Date().toLocaleTimeString()}] ⚡ Ускорение • Приоритет VIP`);
-            document.querySelectorAll('.progress-bar').forEach(bar => {
-                const current = parseInt(bar.style.width) || 0;
-                bar.style.width = ${Math.min(95, current + 30)}%;
-            });
-        }
-
-        function stopSimulation() {
-            document.getElementById('shluzyPanel').classList.remove('active');
-            currentSimulation = null;
-            document.getElementById('logTerminal').innerHTML = '';
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', renderClients);
+        
+        document.getElementById('searchInput').addEventListener('input', handleSearch);
+        
+        renderClients();
+        updateStats();
     </script>
 </body>
 </html>
